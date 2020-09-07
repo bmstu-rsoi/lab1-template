@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # TODO you test, compile and deploy steps
+      # TODO build, test and deploy project
       - name: Checkout test repository
         uses: actions/checkout@v2
         with:
