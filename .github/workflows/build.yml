@@ -1,0 +1,24 @@
+name: Build project
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # TODO you test, compile and deploy steps
+      - name: Checkout test repository
+        uses: actions/checkout@v2
+        with:
+          repository: Romanow/person-service-test
+          path: integration-tests
+          ref: master
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Run integration tests
+        uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: integration-tests
+          wrapper-directory: integration-tests
+          arguments: clean test -PtargetUrl=https://rsoi-person-service.herokuapp.com
