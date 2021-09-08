@@ -1,24 +1,41 @@
 name: Build project
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   build:
     name: Build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # TODO build, test and deploy project
-      - name: Checkout test repository
-        uses: actions/checkout@v2
-        with:
-          repository: Romanow/person-service-test
-          path: integration-tests
-          ref: master
+
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Run integration tests
+
+      - name: Build project
         uses: eskatos/gradle-command-action@v1
         with:
-          build-root-directory: integration-tests
-          wrapper-directory: integration-tests
-          arguments: clean test -PtargetUrl=https://rsoi-person-service.herokuapp.com
+          dependencies-cache-enabled: true
+          arguments: clean build
+
+      - name: Deploy project
+        uses: akhileshns/heroku-deploy@v3.4.6
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: rsoi-person-service
+          heroku_email: romanowalex@mail.ru
+          usedocker: true
+
+      - name: Run API Tests
+        id: run-newman
+        uses: anthonyvscode/newman-action@v1
+        with:
+          collection: postman/[inst] Lab1.postman_collection.json
+          environment: postman/[inst][heroku] Lab1.postman_environment.json
+          delayRequest: 50
+          reporters: cli
