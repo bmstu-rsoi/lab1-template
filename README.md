@@ -35,8 +35,8 @@
   коллекцию [lab1.postman_collection.json](postman/%5Binst%5D%20Lab1.postman_collection.json)]) и
   environment [[local] lab1.postman_environment.json](postman/%5Binst%5D%5Blocal%5D%20Lab1.postman_environment.json).
 * В [[inst][heroku] Lab1.postman_environment.json](postman/%5Binst%5D%5Bheroku%5D%20Lab1.postman_environment.json)
-  заменить значение `baseUrl`
-  на адрес развернутого сервиса на heroku.
+  заменить значение `baseUrl` на адрес развернутого сервиса на heroku.
+* В [build.yml](.github/workflows/build.yml) дописать шаги на сборку, прогон unit-тестов и деплой на heroku.
 
 ### Пояснения
 
@@ -58,4 +58,6 @@
 1. Для первичного запуска Github Actions нужно в вашем репозитории перейти во вкладку Actions и нажать `allow actions`.
 1. По-умолчанию, Github Actions стартуют для ветки master и Pull Request (это описано
    в [build.yaml](.github/workflows/build.yml)), это сделано потому что количество бесплатных минут в
-   организации `bmstu-rsoi` ограничено и после превышения лимита минут, сборки у всех будут падать. 
+   организации `bmstu-rsoi` ограничено и после превышения лимита минут, сборки у всех будут падать.
+1. Для деплоя на heroku используется `API_KEY`, его нужно задавать в открытом виде, т.к. при Pull Request ключ,
+   прописанный в ваших secret, не виден.
