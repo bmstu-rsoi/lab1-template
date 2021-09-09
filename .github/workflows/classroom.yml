@@ -27,3 +27,31 @@ jobs:
       - uses: education/autograding@v1
         id: autograder
         continue-on-error: true
+
+      - name: badges branch and make dir
+        run: |
+          git checkout badges
+          mkdir -p .github/badges
+
+      - name: points badge
+        uses: emibcn/badge-action@v1
+        with:
+          LABEL: 'Points'
+          STATUS: ${{ steps.autograder.outputs.Points }}
+          COLOR: cyan
+          path: '.github/badges/points.svg'
+
+      - name: Commit badge
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add '.github/badges/points.svg'
+          git commit -m "Add/Update badge"
+        continue-on-error: true
+
+      - name: Push badge commit
+        uses: ad-m/github-push-action@master
+        if: success()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: badges
