@@ -17,7 +17,7 @@
 * `GET /persons` – информация по всем людям;
 * `POST /persons` – создание новой записи о человеке;
 * `PATCH /persons/{personId}` – обновление существующей записи о человеке;
-* `DELETE /person/{personId}` – удаление записи о человеке.
+* `DELETE /persons/{personId}` – удаление записи о человеке.
 
 [Описание API](person-service.yaml) в формате OpenAPI.
 
