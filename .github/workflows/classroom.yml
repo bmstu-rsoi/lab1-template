@@ -11,7 +11,7 @@ jobs:
     name: Autograding
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -26,34 +26,16 @@ jobs:
           delayRequest: 50
           reporters: cli
 
-      - uses: education/autograding@v1
-        id: autograder
+      - name: Autograding
+        uses: education/autograding@v1
         continue-on-error: true
 
-      - name: badges branch and make dir
-        run: |
-          git checkout badges 2>/dev/null || git checkout -b badges
-          mkdir -p .github/badges
-
-      - name: points badge
-        uses: emibcn/badge-action@v1
+      - name: Github auto grader mark
+        uses: Romanow/google-sheet-autograder-marker@v1.0
         with:
-          LABEL: 'Points'
-          STATUS: ${{ steps.autograder.outputs.Points }}
-          COLOR: cyan
-          path: '.github/badges/points.svg'
-
-      - name: Commit badge
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add '.github/badges/points.svg'
-          git commit -m "Add/Update badge"
-        continue-on-error: true
-
-      - name: Push badge commit
-        uses: ad-m/github-push-action@master
-        if: success()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: badges
+          google_token: ${{secrets.GOOGLE_API_KEY}}
+          sheet_id: "1xkgjUX6Qmk7rdJG-QPOToav-HWWtthJjnShIKnw3oIY"
+          homework_number: 1
+          user_column: 'D'
+          column_offset: 'F'
+          mark: "'+"
