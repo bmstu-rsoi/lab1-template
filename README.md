@@ -37,8 +37,8 @@
   коллекцию [lab1.postman_collection.json](postman/%5Binst%5D%20Lab1.postman_collection.json)]) и
   environment [[local] lab1.postman_environment.json](postman/%5Binst%5D%5Blocal%5D%20Lab1.postman_environment.json).
 * В [[inst][heroku] Lab1.postman_environment.json](postman/%5Binst%5D%5Bheroku%5D%20Lab1.postman_environment.json)
-  заменить значение `baseUrl` на адрес развернутого сервиса на heroku.
-* В [build.yml](.github/workflows/classroom.yml) дописать шаги на сборку, прогон unit-тестов и деплой на heroku.
+  заменить значение `baseUrl` на адрес развернутого сервиса на Heroku.
+* В [build.yml](.github/workflows/classroom.yml) дописать шаги на сборку, прогон unit-тестов и деплой на Heroku.
 
 ### Пояснения
 
@@ -54,4 +54,4 @@
 ### Прием задания
 
 1. При получении задания у вас создается fork этого репозитория для вашего пользователя.
-2. После того, как все тесты успешно завершатся, в Github Classroom на Dashboard будет отмечен успешный прогон тестов.
+2. После того как все тесты успешно завершатся, в Github Classroom на Dashboard будет отмечен успешный прогон тестов.
