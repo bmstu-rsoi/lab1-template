@@ -518,6 +518,9 @@ _deps
 # Binaries for programs and plugins
 *.exe~
 
+# go.mod conflicting with fortran module files
+!*go.mod
+
 # Test binary, built with `go test -c`
 *.test
 
