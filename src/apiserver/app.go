@@ -8,6 +8,7 @@ import (
 	"github.com/migregal/bmstu-iu7-ds-lab1/apiserver/api/http"
 	"github.com/migregal/bmstu-iu7-ds-lab1/apiserver/config"
 	"github.com/migregal/bmstu-iu7-ds-lab1/pkg/apiutils"
+	"github.com/migregal/bmstu-iu7-ds-lab1/pkg/readiness"
 )
 
 type App struct {
@@ -16,11 +17,13 @@ type App struct {
 	http *http.Server
 }
 
-func New(cfg *config.Config) (*App, error) {
+func New(lg *slog.Logger, cfg *config.Config) (*App, error) {
 	a := App{cfg: cfg}
 
+	probe := readiness.New()
+
 	var err error
-	a.http, err = http.New()
+	a.http, err = http.New(lg, probe)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init http server: %w", err)
 	}

@@ -13,7 +13,7 @@ func main() {
 
 	lg := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	app, err := apiserver.New(cfg)
+	app, err := apiserver.New(lg, cfg)
 	if err != nil {
 		lg.Error("[startup] failed to init app: %w", err)
 		os.Exit(1)

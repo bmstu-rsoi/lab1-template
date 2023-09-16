@@ -2,21 +2,44 @@ package http
 
 import (
 	"fmt"
-	"net/http"
+	"log/slog"
 
+	"github.com/migregal/bmstu-iu7-ds-lab1/apiserver/api/http/common"
 	v1 "github.com/migregal/bmstu-iu7-ds-lab1/apiserver/api/http/v1"
+	"github.com/migregal/bmstu-iu7-ds-lab1/pkg/readiness"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
-	mx *http.ServeMux
+	mx *echo.Echo
 }
 
-func New() (*Server, error) {
-	s := Server{}
+func New(lg *slog.Logger, probe *readiness.Probe) (*Server, error) {
+	mx := echo.New()
+	mx.Use(
+		middleware.Recover(),
+		middleware.Logger(),
+		middleware.RequestID(),
+	)
+	mx.Debug = false
+	// mx.HideBanner = true
+	// mx.HidePort = true
+	mx.HTTPErrorHandler = func(err error, c echo.Context) {
+		// Take required information from error and context and send it to a service like New Relic
+		// fmt.Println(c.Path(), c.QueryParams(), err.Error())
 
-	s.mx = http.NewServeMux()
+		mx.DefaultHTTPErrorHandler(err, c)
+	}
 
-	err := v1.InitListener(s.mx)
+	s := Server{mx : mx}
+
+	err := common.InitListener(s.mx, probe)
+	if err != nil {
+		return nil, fmt.Errorf("failed to init common apis: %w", err)
+	}
+	err = v1.InitListener(s.mx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init v1 apis: %w", err)
 	}
@@ -25,5 +48,5 @@ func New() (*Server, error) {
 }
 
 func (s *Server) ListenAndServe(addr string) error {
-	return http.ListenAndServe(addr, s.mx)
+	return s.mx.Start(addr)
 }
