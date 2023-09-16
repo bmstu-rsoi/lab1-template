@@ -1,26 +1,38 @@
 package v1
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-func InitListener(mx *echo.Echo) error {
+type Core interface {
+	AddPerson(context.Context) error
+	GetPerson(context.Context) error
+	GetPersons(context.Context) error
+	UpdatePerson(context.Context) error
+	DeletePerson(context.Context) error
+}
+
+func InitListener(mx *echo.Echo, core Core) error {
 	gr := mx.Group("/api/v1")
 
-	gr.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
+	a := api{core: core}
 
-	gr.POST("/persons", PostPerson)
-	gr.GET("/persons", GetPersons)
-	gr.GET("/persons/:id", GetPersons)
-	gr.PATCH("/persons/:id", PatchPerson)
-	gr.DELETE("/persons/:id", DeletePerson)
+	gr.POST("/persons", a.PostPerson)
+	gr.GET("/persons", a.GetPersons)
+	gr.GET("/persons/:id", a.GetPersons)
+	gr.PATCH("/persons/:id", a.PatchPerson)
+	gr.DELETE("/persons/:id", a.DeletePerson)
 
 	return nil
+}
+
+type api struct {
+	core Core
 }
 
 type PersonRequset struct {
@@ -43,7 +55,7 @@ type ValidationErrorResponse struct {
 	Errors  string `json:"errors"`
 }
 
-func PostPerson(c echo.Context) error {
+func (a *api) PostPerson(c echo.Context) error {
 	var req PersonRequset
 	err := c.Bind(&req); if err != nil {
 		// return c.JSON(http.StatusBadRequest, ValidationErrorResponse{})
@@ -51,17 +63,25 @@ func PostPerson(c echo.Context) error {
 	}
 
 	info := PersonResponse{}
+	err = a.core.AddPerson(c.Request().Context())
+	if err != nil {
+		return fmt.Errorf("failed to add new person: %w", err)
+	}
 
 	return c.JSON(http.StatusCreated, info)
 }
 
-func GetPersons(c echo.Context) error {
+func (a *api) GetPersons(c echo.Context) error {
 	infos := make([]PersonResponse, 1)
+	err := a.core.GetPersons(c.Request().Context())
+	if err != nil {
+		return fmt.Errorf("failed to get list of persons: %w", err)
+	}
 
 	return c.JSON(http.StatusOK, infos)
 }
 
-func GetPerson(c echo.Context) error {
+func (a *api) GetPerson(c echo.Context) error {
 	id64, err := strconv.ParseInt(c.Param("id"), 10, 32)
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
@@ -69,11 +89,15 @@ func GetPerson(c echo.Context) error {
 	id := int32(id64)
 
 	info := PersonResponse{ID: id}
+	err = a.core.GetPerson(c.Request().Context())
+	if err != nil {
+		return fmt.Errorf("failed to get person: %w", err)
+	}
 
 	return c.JSON(http.StatusOK, info)
 }
 
-func PatchPerson(c echo.Context) error {
+func (a *api) PatchPerson(c echo.Context) error {
 	id64, err := strconv.ParseInt(c.Param("id"), 10, 32)
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
@@ -87,11 +111,15 @@ func PatchPerson(c echo.Context) error {
 	}
 
 	info := PersonResponse{ID: id}
+	err = a.core.UpdatePerson(c.Request().Context())
+	if err != nil {
+		return fmt.Errorf("failed to update person: %w", err)
+	}
 
 	return c.JSON(http.StatusOK, info)
 }
 
-func DeletePerson(c echo.Context) error {
+func (a *api) DeletePerson(c echo.Context) error {
 	id64, err := strconv.ParseInt(c.Param("id"), 10, 32)
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
@@ -102,6 +130,11 @@ func DeletePerson(c echo.Context) error {
 	if err = c.Bind(&req); err != nil {
 		// return c.JSON(http.StatusBadRequest, ValidationErrorResponse{})
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = a.core.DeletePerson(c.Request().Context())
+	if err != nil {
+		return fmt.Errorf("failed to delete person: %w", err)
 	}
 
 	info := PersonResponse{ID: id}

@@ -12,11 +12,15 @@ import (
 	"github.com/migregal/bmstu-iu7-ds-lab1/pkg/readiness"
 )
 
+type Core interface {
+	v1.Core
+}
+
 type Server struct {
 	mx *echo.Echo
 }
 
-func New(lg *slog.Logger, probe *readiness.Probe) (*Server, error) {
+func New(lg *slog.Logger, probe *readiness.Probe, core Core) (*Server, error) {
 	mx := echo.New()
 	mx.Use(
 		middleware.Recover(),
@@ -33,13 +37,13 @@ func New(lg *slog.Logger, probe *readiness.Probe) (*Server, error) {
 		mx.DefaultHTTPErrorHandler(err, c)
 	}
 
-	s := Server{mx : mx}
+	s := Server{mx: mx}
 
 	err := common.InitListener(s.mx, probe)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init common apis: %w", err)
 	}
-	err = v1.InitListener(s.mx)
+	err = v1.InitListener(s.mx, core)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init v1 apis: %w", err)
 	}
