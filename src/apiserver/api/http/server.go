@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/migregal/bmstu-iu7-ds-lab1/apiserver/api/http/common"
 	v1 "github.com/migregal/bmstu-iu7-ds-lab1/apiserver/api/http/v1"
 	"github.com/migregal/bmstu-iu7-ds-lab1/pkg/readiness"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
