@@ -84,7 +84,6 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yaml --env-file .env up -d
           chmod +x wait-script.sh
-#          sleep 5
           bash wait-script.sh
         env:
           WAIT_PORTS: 8080
