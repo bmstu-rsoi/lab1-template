@@ -82,7 +82,7 @@ jobs:
       - name: Run containers
         timeout-minutes: 5
         run: |
-          docker compose -f ./docker-compose.yaml --env-file .env up -d
+          docker compose -f ./docker-compose.yaml --env-file .env up -d --build
           chmod +x wait-script.sh
           bash wait-script.sh
         env:
