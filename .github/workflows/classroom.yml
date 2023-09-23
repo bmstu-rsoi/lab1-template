@@ -78,14 +78,11 @@ jobs:
 
 #      - uses: docker/setup-buildx-action@v2
 
-      - name: Build images
-        timeout-minutes: 10
-        run: docker compose build
-
       - name: Run containers
         timeout-minutes: 5
         run: |
           docker compose -f ./docker-compose.yaml --env-file .env up -d
+          chmod +x wait-script.sh
           ./wait-script.sh
         env:
           WAIT_PORTS: 8080
