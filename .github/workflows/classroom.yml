@@ -72,7 +72,7 @@ jobs:
 #    if: github.repository == 'skip'
     name: Integration Test
     runs-on: ubuntu-latest
-    needs: build
+#    needs: build
     steps:
       - uses: actions/checkout@v3
 
