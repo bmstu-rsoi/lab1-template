@@ -183,4 +183,3 @@ jobs:
             docker compose -f ./person/docker-compose.yaml --env-file ./person/.env pull
             docker compose -f ./person/docker-compose.yaml --env-file ./person/.env down || echo 'no person-compose'
             docker compose -f ./person/docker-compose.yaml --env-file ./person/.env up -d
-            
