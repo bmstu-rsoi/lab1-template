@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Astemirdum/person-service/internal/errs"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/Astemirdum/person-service/internal/errs"
 
 	"github.com/Astemirdum/person-service/internal/model"
 
