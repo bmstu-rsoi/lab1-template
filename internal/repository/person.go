@@ -24,18 +24,20 @@ func (r *repository) List(ctx context.Context) ([]personModel.Person, error) {
 	return pp, err
 }
 
-func (r *repository) Create(ctx context.Context, person personModel.Person) error {
+func (r *repository) Create(ctx context.Context, person personModel.Person) (int, error) {
 	builder := qb.Insert(personsTableName).
 		Columns("name", "age", "address", "work").
-		Values(person.Name, person.Age, person.Address, person.Work)
-
+		Values(person.Name, person.Age, person.Address, person.Work).
+		Suffix("returning id")
 	query, args, err := builder.ToSql()
 	if err != nil {
-		return err
+		return 0, err
 	}
-
-	_, err = r.db.ExecContext(ctx, query, args...)
-	return err
+	var id int
+	if err = r.db.GetContext(ctx, &id, query, args...); err != nil {
+		return 0, err
+	}
+	return id, nil
 }
 
 func (r *repository) Get(ctx context.Context, id int) (personModel.Person, error) {

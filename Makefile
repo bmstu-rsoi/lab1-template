@@ -58,11 +58,11 @@ deps: .deps
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build -o ./bin/${SERVICE_NAME} ./cmd/${SERVICE_NAME}/main.go
+	CGO_ENABLED=0 go build -o ./bin/${SERVICE_NAME} ./cmd/main.go
 
 .PHONY: clean
 clean:
-	rm bin/${SERVICE_NAME} && rm bin/${SERVICE_NAME}
+	rm bin/${SERVICE_NAME}
 
 .PHONY: clean-all
 clean-all:

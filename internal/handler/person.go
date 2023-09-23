@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -12,11 +13,6 @@ import (
 	personModel "github.com/Astemirdum/person-service/internal/model"
 )
 
-type UpdatePersonReq struct {
-	Name    string `db:"name"`
-	Surname string `db:"surname"`
-}
-
 func (h *Handler) ListPerson(c echo.Context) error {
 	ctx := c.Request().Context()
 
@@ -25,7 +21,6 @@ func (h *Handler) ListPerson(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	c.Response().Header().Set("Content-Type", echo.MIMEApplicationJSON)
-	// h.log.Info("h.personSvc.Get", zap.Any("person", person))
 
 	return c.JSON(http.StatusOK, persons)
 }
@@ -39,10 +34,11 @@ func (h *Handler) CreatePerson(c echo.Context) error {
 		return httpValidationError(c, err)
 	}
 	ctx := c.Request().Context()
-	if err := h.personSvc.Create(ctx, pers); err != nil {
+	id, err := h.personSvc.Create(ctx, pers)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	c.Response().Header().Set("Location", "")
+	c.Response().Header().Set("Location", fmt.Sprintf("/api/v1/persons/%d", id))
 
 	return c.String(http.StatusOK, "OK")
 }

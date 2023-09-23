@@ -10,11 +10,8 @@ func (s *Service) List(ctx context.Context) ([]personModel.Person, error) {
 	return s.repo.List(ctx)
 }
 
-func (s *Service) Create(ctx context.Context, person personModel.Person) error {
-	if err := s.repo.Create(ctx, person); err != nil {
-		return err
-	}
-	return nil
+func (s *Service) Create(ctx context.Context, person personModel.Person) (int, error) {
+	return s.repo.Create(ctx, person)
 }
 
 func (s *Service) Delete(ctx context.Context, id int) error {

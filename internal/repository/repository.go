@@ -10,7 +10,7 @@ import (
 
 type Repository interface {
 	List(ctx context.Context) ([]personModel.Person, error)
-	Create(ctx context.Context, person personModel.Person) error
+	Create(ctx context.Context, person personModel.Person) (int, error)
 	Get(ctx context.Context, id int) (personModel.Person, error)
 	Delete(ctx context.Context, id int) error
 	Update(ctx context.Context, person personModel.Person) (personModel.Person, error)
