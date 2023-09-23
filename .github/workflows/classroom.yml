@@ -76,12 +76,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: docker/setup-buildx-action@v2
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: jar
-          path: build/libs/
+#      - uses: docker/setup-buildx-action@v2
 
       - name: Build images
         timeout-minutes: 10
@@ -90,7 +85,7 @@ jobs:
       - name: Run containers
         timeout-minutes: 5
         run: |
-          docker compose -f ./docker-compose.yaml --env-file $(ENV) up -d
+          docker compose -f ./docker-compose.yaml --env-file .env up -d
           ./wait-script.sh
         env:
           WAIT_PORTS: 8080
