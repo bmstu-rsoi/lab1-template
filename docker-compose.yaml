@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  person-service:
+    build: .
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
+    restart: unless-stopped
+    container_name: person-service
+    environment:
+      - DB_HOST=postgres
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+    depends_on:
+      - postgres
+    networks:
+      - person
+
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./postgres/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+    networks:
+      - person
+
+networks:
+  person:
+
+volumes:
+  db-data:
