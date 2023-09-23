@@ -1,12 +1,11 @@
 package handler
 
 import (
-	"github.com/Astemirdum/person-service/pkg/validate"
 	"net/http"
 	"time"
 
+	"github.com/Astemirdum/person-service/pkg/validate"
 	"github.com/labstack/echo/v4"
-
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/zap"

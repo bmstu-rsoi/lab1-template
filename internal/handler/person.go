@@ -2,9 +2,10 @@ package handler
 
 import (
 	"errors"
-	"github.com/Astemirdum/person-service/internal/errs"
 	"net/http"
 	"strconv"
+
+	"github.com/Astemirdum/person-service/internal/errs"
 
 	"github.com/labstack/echo/v4"
 
@@ -24,7 +25,7 @@ func (h *Handler) ListPerson(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	c.Response().Header().Set("Content-Type", echo.MIMEApplicationJSON)
-	//h.log.Info("h.personSvc.Get", zap.Any("person", person))
+	// h.log.Info("h.personSvc.Get", zap.Any("person", person))
 
 	return c.JSON(http.StatusOK, persons)
 }
