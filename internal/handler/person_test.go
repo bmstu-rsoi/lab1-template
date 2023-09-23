@@ -59,7 +59,7 @@ func TestHandler_CreatePerson(t *testing.T) {
 }`,
 			},
 			response: response{
-				expectedCode: http.StatusOK,
+				expectedCode: http.StatusCreated,
 				expectedBody: `OK`,
 				header:       `/api/v1/persons/1`, //
 			},

@@ -40,7 +40,7 @@ func (h *Handler) CreatePerson(c echo.Context) error {
 	}
 	c.Response().Header().Set("Location", fmt.Sprintf("/api/v1/persons/%d", id))
 
-	return c.String(http.StatusOK, "OK")
+	return c.String(http.StatusCreated, "OK")
 }
 
 func (h *Handler) GetPerson(c echo.Context) error {
