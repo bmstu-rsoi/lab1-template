@@ -116,7 +116,7 @@ jobs:
           mark: "'+"
 
   publish:
-#    if: github.repository == 'skip'
+    if: github.repository == 'skip'
     name: Publish to Docker Hub
     runs-on: ubuntu-latest
     env:
