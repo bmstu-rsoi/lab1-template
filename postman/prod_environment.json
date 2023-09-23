@@ -4,7 +4,7 @@
 	"values": [
 		{
 			"key": "baseUrl",
-			"value": "${{ secrets.SSH_HOST }}",
+			"value": "http://${{ secrets.SSH_HOST }}:8080",
 			"enabled": true
 		}
 	],
