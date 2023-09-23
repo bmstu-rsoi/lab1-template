@@ -5,10 +5,6 @@ ENV=.env
 run:
 	docker compose -f ./docker-compose.yaml --env-file $(ENV) up -d #--build #--remove-orphans
 
-.PHONY: run-db
-run-db:
-	docker compose -f ./docker-compose.yaml --env-file $(ENV) up -d postgres
-
 .PHONY: run-svc
 run-svc: #  make run-svc svc=redis
 	docker compose -f ./docker-compose.yaml --env-file $(ENV) up -d $(svc)
@@ -49,6 +45,10 @@ image-push:
 docker-login:
 	docker login -u ${REGISTRY_USER} -p ${REGISTRY_PASS}
 
+
+.PHONY: mocks
+mocks:
+	cd internal/handler; go generate;
 
 .PHONY: .deps
 deps: .deps

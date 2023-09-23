@@ -28,10 +28,10 @@ func (h *Handler) ListPerson(c echo.Context) error {
 func (h *Handler) CreatePerson(c echo.Context) error {
 	var pers personModel.Person
 	if err := c.Bind(&pers); err != nil {
-		return httpValidationError(c, err)
+		return httpValidationError(c, http.StatusBadRequest, err)
 	}
 	if err := c.Validate(pers); err != nil {
-		return httpValidationError(c, err)
+		return httpValidationError(c, http.StatusBadRequest, err)
 	}
 	ctx := c.Request().Context()
 	id, err := h.personSvc.Create(ctx, pers)
@@ -88,10 +88,10 @@ func (h *Handler) UpdatePerson(c echo.Context) error {
 
 	var pers personModel.Person
 	if err := c.Bind(&pers); err != nil {
-		return httpValidationError(c, err)
+		return httpValidationError(c, http.StatusBadRequest, err)
 	}
 	if err := c.Validate(pers); err != nil {
-		return httpValidationError(c, err)
+		return httpValidationError(c, http.StatusBadRequest, err)
 	}
 	pers.ID = id
 	resp, err := h.personSvc.Update(ctx, pers)
@@ -105,8 +105,9 @@ func (h *Handler) UpdatePerson(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-func httpValidationError(c echo.Context, err error) error {
-	return c.JSON(http.StatusBadRequest, errs.ValidationErrorResponse{
+func httpValidationError(c echo.Context, code int, err error) error {
+	c.Response().WriteHeader(code)
+	_ = c.JSON(code, &errs.ValidationErrorResponse{ //nolint:errcheck
 		Message: err.Error(),
 		Errors: struct {
 			AdditionalProperties string `json:"additionalProperties"`
@@ -114,4 +115,5 @@ func httpValidationError(c echo.Context, err error) error {
 			AdditionalProperties: "",
 		},
 	})
+	return errors.New("")
 }

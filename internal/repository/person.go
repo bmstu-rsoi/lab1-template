@@ -34,7 +34,7 @@ func (r *repository) Create(ctx context.Context, person personModel.Person) (int
 		return 0, err
 	}
 	var id int
-	if err = r.db.GetContext(ctx, &id, query, args...); err != nil {
+	if err := r.db.GetContext(ctx, &id, query, args...); err != nil {
 		return 0, err
 	}
 	return id, nil
