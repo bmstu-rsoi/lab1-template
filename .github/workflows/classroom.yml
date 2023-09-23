@@ -88,7 +88,7 @@ jobs:
       - name: Run containers
         timeout-minutes: 5
         run: |
-          docker compose up -d
+          docker compose -f ./docker-compose.yaml --env-file $(ENV) up -d
           ./wait-script.sh
         env:
           WAIT_PORTS: 8080
