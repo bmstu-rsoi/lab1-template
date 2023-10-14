@@ -13,6 +13,25 @@ services:
       - ./postgres/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  person_service:
+    image: ps
+    container_name: person-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/persons
+      - SPRING_DATASOURCE_USERNAME=program
+      - SPRING_DATASOURCE_PASSWORD=test
+      - SPRING.JPA.HIBERNATE.DDL-AUTO=create-drop
 
 volumes:
   db-data:
