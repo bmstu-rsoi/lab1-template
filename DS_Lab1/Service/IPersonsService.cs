@@ -3,7 +3,7 @@ using DS_Lab1.Models;
 
 namespace DS_Lab1.Service
 {
-    public interface IPersonService
+    public interface IPersonsService
     {
         IEnumerable<PersonResponse> GetAll();
         PersonResponse Get(int id);
