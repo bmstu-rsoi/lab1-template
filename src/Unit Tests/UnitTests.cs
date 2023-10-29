@@ -1,31 +1,34 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PersonRepository;
+using Controllers;
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System.Collections.Generic;
-using ErrorCodes;
+using MyBD;
+using lab1.Repository.Interfaces;
+using lab1.Repository.Implementation;
+using Entity;
 
 namespace TestProject
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTests
     {
 
-        private transfersystemContext db;
-        private IPersonRep personRep;
+        private BDContext db;
+        private IPersonRepository personRep;
 
         [TestInitialize]
         public void Init()
         {
-            var options = new DbContextOptionsBuilder<transfersystemContext>()
+            var options = new DbContextOptionsBuilder<BDContext>()
                 .UseInMemoryDatabase("PersonsControllerTest")
                 .Options;
-            db = new transfersystemContext(options);
+            db = new BDContext(options);
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
-            personRep = new PersonRep(db);
+            personRep = new PersonRepository(db);
 
         }
 
@@ -53,7 +56,7 @@ namespace TestProject
             checkPerson = personRep.Update(changedPerson);
             Assert.IsTrue(PersonCompare(changedPerson, checkPerson));
 
-            checkPerson = personRep.FindUserByID(changedPerson.Id);
+            checkPerson = personRep.GetUserByID(changedPerson.Id);
             Assert.IsTrue(PersonCompare(changedPerson, checkPerson));
         }
 
@@ -72,10 +75,10 @@ namespace TestProject
                 Assert.IsTrue(PersonCompare(person, checkPerson));
             }
 
-            ErrorCode code = personRep.Delete(persons[1].Id);
-            Assert.IsTrue(code.Equals(ErrorCode.OK));
+            int code = personRep.Delete(persons[1].Id);
+            Assert.IsTrue(code == 0);
 
-            checkPerson = personRep.FindUserByID(persons[1].Id);
+            checkPerson = personRep.GetUserByID(persons[1].Id);
             Assert.IsNull(checkPerson);
         }
 
@@ -94,8 +97,8 @@ namespace TestProject
                 Assert.IsTrue(PersonCompare(person, checkPerson));
             }
 
-            ErrorCode code = personRep.Delete(5);
-            Assert.IsTrue(code.Equals(ErrorCode.NotFound));
+            int code = personRep.Delete(5);
+            Assert.IsTrue(code == 1);
         }
 
         [TestMethod]
@@ -115,7 +118,7 @@ namespace TestProject
 
             foreach (Person person in persons)
             {
-                checkPerson = personRep.FindUserByID(person.Id);
+                checkPerson = personRep.GetUserByID(person.Id);
                 Assert.IsTrue(PersonCompare(person, checkPerson));
             }
         }
@@ -135,7 +138,7 @@ namespace TestProject
                 Assert.IsTrue(PersonCompare(person, checkPerson));
             }
 
-            checkPerson = personRep.FindUserByID(persons[1].Id);
+            checkPerson = personRep.GetUserByID(persons[1].Id);
             Assert.IsTrue(PersonCompare(persons[1], checkPerson));
 
         }
@@ -147,7 +150,7 @@ namespace TestProject
 
             person = personRep.Add(person);
 
-            Person checkPerson = personRep.FindUserByID(person.Id);
+            Person checkPerson = personRep.GetUserByID(person.Id);
             Assert.IsTrue(PersonCompare(person, checkPerson));
 
         }
