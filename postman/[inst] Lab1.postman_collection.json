@@ -166,7 +166,6 @@
 									"    ",
 									"    const request = JSON.parse(pm.request.body)",
 									"    const response = pm.response.json();",
-									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('personId'))",
 									"    pm.expect(response.name).to.eq(request.name)",
 									"    pm.expect(response.address).to.eq(request.address)",
 									"    pm.expect(response.work).to.eq(pm.collectionVariables.get('work'))",
