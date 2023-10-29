@@ -21,7 +21,7 @@ jobs:
           dotnet-version: 5.0.x
       
       - name: Test
-        run:  dotnet test src/UnitTests/UnitTests.csproj
+        run:  dotnet test src/UnitTests/TestProgect.csproj
       
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v3
