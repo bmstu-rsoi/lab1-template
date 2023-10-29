@@ -170,7 +170,7 @@
 									"    pm.expect(response.name).to.eq(request.name)",
 									"    pm.expect(response.address).to.eq(request.address)",
 									"    pm.expect(response.work).to.eq(pm.collectionVariables.get('work'))",
-									
+									"    pm.expect(response.age).to.eq(pm.collectionVariables.get('age'))",
 									"})"
 								],
 								"type": "text/javascript"

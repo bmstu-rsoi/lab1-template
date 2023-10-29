@@ -41,7 +41,7 @@ namespace lab1.Repository.Implementation
                 person.Name = element.Name ?? person.Name;
                 person.Address = element.Address ?? person.Address;
                 person.Work = element.Work ?? person.Work;
-                person.Age = (element.Age < 0) ? person.Age : element.Age;
+                person.Age = (element.Age <= 0) ? person.Age : element.Age;
                 db.ChangeTracker.Clear();
                 db.Person.Attach(person);
                 db.Person.Update(person);
