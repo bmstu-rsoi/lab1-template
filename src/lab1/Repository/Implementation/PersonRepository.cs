@@ -31,9 +31,9 @@ namespace lab1.Repository.Implementation
             IQueryable<Person> users = db.Person;
             return users == null || users.Count() == 0 ? null : users.ToList();
         }
-        public Person Update(Person element)
+        public Person Update(int id, Person element)
         {
-            Person person = db.Person.Find(element.Id);
+            Person person = db.Person.Find(id);
             if (person != null)
             {
                 person.Name = element.Name ?? person.Name;

@@ -107,8 +107,7 @@ namespace Controllers
         {
             try
             {
-                person.Id = Id;
-                var person_ = personRepository.Update(person);
+                var person_ = personRepository.Update(Id, person);
                 return person_ != null ? Ok(person_) : NotFound();
             }
             catch (Exception e)
