@@ -7,7 +7,7 @@ namespace lab1.Repository.Interfaces
     {
         T Add(T element);
         List<T> GetAll();
-        T Update(int Id, T element);
+        T Update(long Id, T element);
         int Delete(long id);
     }
 }

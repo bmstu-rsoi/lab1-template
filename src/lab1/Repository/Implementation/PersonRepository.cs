@@ -31,11 +31,13 @@ namespace lab1.Repository.Implementation
             IQueryable<Person> users = db.Person;
             return users == null || users.Count() == 0 ? null : users.ToList();
         }
-        public Person Update(int id, Person element)
+        public Person Update(long id, Person element)
         {
+  
             Person person = db.Person.Find(id);
             if (person != null)
             {
+                person.Id = element.Id;
                 person.Name = element.Name ?? person.Name;
                 person.Address = element.Address ?? person.Address;
                 person.Work = element.Work ?? person.Work;

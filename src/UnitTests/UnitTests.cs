@@ -53,7 +53,7 @@ namespace TestProject
                 Assert.IsTrue(PersonCompare(person, checkPerson));
             }
 
-            checkPerson = personRep.Update(changedPerson);
+            checkPerson = personRep.Update(2, changedPerson);
             Assert.IsTrue(PersonCompare(changedPerson, checkPerson));
 
             checkPerson = personRep.GetUserByID(changedPerson.Id);
