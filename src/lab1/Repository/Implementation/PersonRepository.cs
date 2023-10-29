@@ -19,7 +19,6 @@ namespace lab1.Repository.Implementation
             element.Address ??= "";
             element.Name ??= "";
             element.Work ??= "";
-            element.Age = -1;
             db.ChangeTracker.Clear();
             db.Person.Attach(element);
             db.Person.Add(element);

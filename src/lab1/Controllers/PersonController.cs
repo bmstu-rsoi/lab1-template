@@ -32,7 +32,7 @@ namespace Controllers
         /// <response code="500">Ошибка сервера</response>
         [IgnoreAntiforgeryToken]
         [HttpGet("{Id}")]
-        public ActionResult FindPersonById(int Id)
+        public ActionResult GetPersonById(int Id)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Controllers
         /// <response code="500">Ошибка сервера</response>
         [IgnoreAntiforgeryToken]
         [HttpGet]
-        public ActionResult FindAllPerson()
+        public ActionResult GetAllPerson()
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Controllers
         /// </summary>
         /// <param name="Id">Идентификатор</param>
         /// <returns>Код результата</returns>
-        /// <response code="200" cref="Person">Успешно удалено</response>
+        /// <response code="204" cref="Person">Успешно удалено</response>
         /// <response code="404">Не найдено записи</response>
         /// <response code="500">Ошибка сервера</response>
         [IgnoreAntiforgeryToken]
