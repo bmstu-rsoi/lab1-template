@@ -47,5 +47,7 @@ jobs:
       - name: Deploy
         env:
           deploy_url: ${{ secrets.DEPLOY_HOOK_URL }}
+          service_url: ${{ secrets.SERVICE_URL }}
         run: |
           curl "$deploy_url"
+          curl "$service_url"
