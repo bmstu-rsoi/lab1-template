@@ -1,4 +1,6 @@
-﻿namespace DS_Lab1.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DS_Lab1.Models
 {
     public class Person
     {

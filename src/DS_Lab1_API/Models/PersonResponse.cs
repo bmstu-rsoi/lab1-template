@@ -1,10 +1,13 @@
 ﻿using DS_Lab1.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace DS_Lab1.CommunicationElements
 {
     public class PersonResponse
     {
+        [Required]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public int? Age { get; set; }
         public string? Adress { get; set; }

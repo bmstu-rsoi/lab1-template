@@ -14,12 +14,12 @@ namespace DS_Lab1.Repository
 
         public async Task CreateAsync(Person person)
         {
-            await _context.Persons.AddAsync(person);
+            await _context.Persons.AddAsync(person).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var item = await GetAsync(id);
+            var item = await GetAsync(id).ConfigureAwait(false);
 
             if (item is not null)
                 _context.Persons.Remove(item);
@@ -27,17 +27,17 @@ namespace DS_Lab1.Repository
 
         public async Task<IEnumerable<Person>> GetAllAsync()
         {
-            return await _context.Persons.ToListAsync();
+            return await _context.Persons.ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<Person?> GetAsync(int id)
         {
-            return await _context.Persons.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            return await _context.Persons.FirstOrDefaultAsync(e => e.Id.Equals(id)).ConfigureAwait(false);
         }
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public void Update(Person person)

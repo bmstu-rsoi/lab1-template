@@ -21,9 +21,13 @@ namespace DS_Lab1
         {
             modelBuilder.Entity<Person>(entity =>
             {
+                entity.HasKey(p => p.Id).HasName("Id");
+
                 entity.ToTable("persons_table");
 
-                entity.HasKey(p => p.Id).HasName("id");
+                entity.Property(p => p.Id).ValueGeneratedOnAdd().HasColumnName("Id");
+
+                //NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(entity.Property(p => p.Id));
 
                 entity.Property(e => e.Name).IsRequired().HasColumnName("name");
 
