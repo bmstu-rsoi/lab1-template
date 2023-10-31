@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  rsoi_lab_01:
+    image: ${DOCKER_REGISTRY-}rsoilab01
+    build:
+      context: .
+      dockerfile: RSOI_Lab_01/Dockerfile
