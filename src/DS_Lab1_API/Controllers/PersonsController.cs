@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DS_Lab1.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/persons")]
     [ApiController]
     public class PersonsController : Controller
     {
@@ -63,11 +63,11 @@ namespace DS_Lab1.Controllers
             {
                 var ans = await _personsService.CreateAsync(person);
 
-                return Created(new Uri(RouteData.ToString() + $"/{ans!.Value}"), null);
+                return Created($"api/v1/persons/{ans!.Value}", null);
             }
-            catch (ValidationException e)
+            catch (Exception e)
             {
-                return BadRequest(e.Value?.ToString() + " || Ass");
+                return BadRequest(e.Message);
             }
         }
 
