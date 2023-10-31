@@ -4,6 +4,8 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
+COPY ["WebApplication3.csproj", "."]
+RUN dotnet restore "./WebApplication3.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "WebApplication3.csproj" -c Release -o /app/build
