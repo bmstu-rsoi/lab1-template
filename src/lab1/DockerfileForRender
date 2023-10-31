@@ -14,7 +14,7 @@ FROM build AS publish
 RUN dotnet publish "WebApplication3.csproj" -c Release -o /app/publish
 
 FROM base AS final
-ENV CON_STRING="Host = dpg-ckhbfkkldqrs73963ma0-a; Port = 5432; Database = persons_tclx; Username = postgres_user; Password = VMbWwEgv59aBOVboW2FSDtOXsNgsSSoX"
+ENV CON_STRING="Host = dpg-cl0hfcc8s0fs73e6d0eg-a; Port = 5432; Database = persons; Username = mpostgres; Password = Rc1Po2kxHC77Z2Ya1Ob8NVTxjG0mDUyV"
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "lab1.dll", "--urls=http://0.0.0.0:8080"]
