@@ -1,4 +1,4 @@
-name: GitHub Classroom Workflow
+name: CICD
 on:
   push:
     branches:
@@ -7,34 +7,45 @@ on:
     branches:
       - master
 jobs:
-  build:
+  test_build_and_deploy:
     name: Autograding
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      
+      - name: Setup .NET SDK 
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 5.0.x
+      
+      - name: Test
+        run:  dotnet test src/UnitTests/TestProject.csproj
+      
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: dotnet-results
+          path: src/lab1/TestResults
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
 
-      # TODO build, test and deploy project
-
+      - name: Build
+        run: |
+             docker-compose up -d --build 
+             docker-compose logs
+             docker-compose ps
       - name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
           collection: postman/[inst] Lab1.postman_collection.json
-          environment: postman/[inst][heroku] Lab1.postman_environment.json
+          environment: postman/[inst][local] Lab1.postman_environment.json
           delayRequest: 100
           reporters: '[ "cli" ]'
 
-      - name: Autograding
-        uses: education/autograding@v1
-        continue-on-error: true
-
-      - name: Github auto grader mark
-        uses: Romanow/google-sheet-autograder-marker@v1.0
-        with:
-          google_token: ${{secrets.GOOGLE_API_KEY}}
-          sheet_id: "1xkgjUX6Qmk7rdJG-QPOToav-HWWtthJjnShIKnw3oIY"
-          homework_number: 1
-          user_column: 'D'
-          column_offset: 'F'
-          mark: "'+"
+      - name: Deploy
+        env:
+          deploy_url: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"

@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY ["/src/lab1/WebApplication3.csproj", "."]
+RUN dotnet restore "./WebApplication3.csproj"
+COPY /src/lab1/. .
+WORKDIR "/src/."
+RUN dotnet build "WebApplication3.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "WebApplication3.csproj" -c Release -o /app/publish
+
+FROM base AS final
+ENV CON_STRING="Host = dpg-cl0hfcc8s0fs73e6d0eg-a; Port = 5432; Database = persons; Username = mpostgres; Password = Rc1Po2kxHC77Z2Ya1Ob8NVTxjG0mDUyV"
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "lab1.dll", "--urls=http://0.0.0.0:8080"]
