@@ -2,10 +2,10 @@ name: GitHub Classroom Workflow
 on:
   push:
     branches:
-      - master
+      - [ "master", "dev" ]
   pull_request:
     branches:
-      - master
+      - [ "master", "dev" ]
 jobs:
   build:
     runs-on: ubuntu-latest
