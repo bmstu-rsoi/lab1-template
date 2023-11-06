@@ -1,24 +1,27 @@
 name: GitHub Classroom Workflow
+
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore source/RSOI_Lab_01
-    - name: Build
-      run: dotnet build source/RSOI_Lab_01 --no-restore
-    - name: Unit testing
-      run: dotnet test source/UnitTests --no-build --verbosity normal
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - name: Restore dependencies
+        run: dotnet restore source/RSOI_Lab_01
+      - name: Build
+        run: dotnet build source/RSOI_Lab_01 --no-restore
+      - name: Unit testing
+        run: dotnet test source/UnitTests --verbosity normal
     #name: Autograding
     #runs-on: ubuntu-latest
     #steps:
