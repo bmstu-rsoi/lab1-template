@@ -1,0 +1,10 @@
+.cache/
+.git/
+.github/
+build/
+cmake-build-*/
+.idea/
+.vscode/
+.env
+.env.*
+*.log
