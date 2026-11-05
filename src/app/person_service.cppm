@@ -21,10 +21,11 @@ export namespace app {
 
     struct PersonPatch {
         std::optional<std::string> name;
-        std::optional<int> age;
-        std::optional<std::string> address;
-        std::optional<std::string> work;
+        std::optional<std::optional<int>> age;
+        std::optional<std::optional<std::string>> address;
+        std::optional<std::optional<std::string>> work;
     };
+
 
     class PersonService {
     public:
@@ -51,17 +52,17 @@ export namespace app {
             return repository_.create(std::move(person));
         }
 
-        std::optional<domain::Person> update(int id, const PersonPatch& patch) {
+        std::optional<domain::Person> update(
+            int id,
+            const PersonPatch& patch
+        ) {
             auto person = repository_.findById(id);
 
-            if (!person) {
-                return std::nullopt;
-            }
-
+            if (!person) return std::nullopt;
             if (patch.name) person->name = *patch.name;
-            if (patch.age) person->age = patch.age;
-            if (patch.address) person->address = patch.address;
-            if (patch.work) person->work = patch.work;
+            if (patch.age) person->age = *patch.age;
+            if (patch.address) person->address = *patch.address;
+            if (patch.work) person->work = *patch.work;
 
             return repository_.update(std::move(*person));
         }
