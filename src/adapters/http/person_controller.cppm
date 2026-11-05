@@ -29,18 +29,30 @@ HttpResponsePtr jsonResponse(
     return response;
 }
 
-HttpResponsePtr errorResponse(
-    const std::string& message,
-    HttpStatusCode status = k400BadRequest
+HttpResponsePtr validationError(
+    const std::string& field,
+    const std::string& message
 ) {
     Json::Value body;
-    body["error"] = message;
+    body["message"] = "Validation failed";
+    body["errors"] = Json::Value(Json::objectValue);
+    body["errors"][field] = message;
 
-    return jsonResponse(body, status);
+    return jsonResponse(body, k400BadRequest);
+}
+
+HttpResponsePtr invalidBody() {
+    return validationError(
+        "body",
+        "Request body must be a JSON object"
+    );
 }
 
 HttpResponsePtr notFound() {
-    return errorResponse("Person not found", k404NotFound);
+    Json::Value body;
+    body["message"] = "Person not found";
+
+    return jsonResponse(body, k404NotFound);
 }
 
 Json::Value toJson(const domain::Person& person) {
@@ -70,40 +82,43 @@ bool parseCreate(
     HttpResponsePtr& error
 ) {
     if (!json || !json->isObject()) {
-        error = errorResponse("Request body must be a JSON object");
+        error = invalidBody();
         return false;
     }
 
-    if (!json->isMember("name") || !(*json)["name"].isString()) {
-        error = errorResponse(
-            "Field 'name' is required and must be a string"
-        );
+    if (!json->isMember("name")) {
+        error = validationError("name", "Field is required");
+        return false;
+    }
+
+    if (!(*json)["name"].isString()) {
+        error = validationError("name", "Must be a string");
         return false;
     }
 
     data.name = (*json)["name"].asString();
 
-    if (json->isMember("age") && !(*json)["age"].isNull()) {
+    if (json->isMember("age")) {
         if (!(*json)["age"].isInt()) {
-            error = errorResponse("Field 'age' must be an integer");
+            error = validationError("age", "Must be an integer");
             return false;
         }
 
         data.age = (*json)["age"].asInt();
     }
 
-    if (json->isMember("address") && !(*json)["address"].isNull()) {
+    if (json->isMember("address")) {
         if (!(*json)["address"].isString()) {
-            error = errorResponse("Field 'address' must be a string");
+            error = validationError("address", "Must be a string");
             return false;
         }
 
         data.address = (*json)["address"].asString();
     }
 
-    if (json->isMember("work") && !(*json)["work"].isNull()) {
+    if (json->isMember("work")) {
         if (!(*json)["work"].isString()) {
-            error = errorResponse("Field 'work' must be a string");
+            error = validationError("work", "Must be a string");
             return false;
         }
 
@@ -119,62 +134,47 @@ bool parsePatch(
     HttpResponsePtr& error
 ) {
     if (!json || !json->isObject()) {
-        error = errorResponse("Request body must be a JSON object");
+        error = invalidBody();
         return false;
     }
 
-    if (json->isMember("name")) {
-        if (!(*json)["name"].isString()) {
-            error = errorResponse("Field 'name' must be a string");
+    if (!json->isMember("name")) {
+        error = validationError("name", "Field is required");
+        return false;
+    }
+
+    if (!(*json)["name"].isString()) {
+        error = validationError("name", "Must be a string");
+        return false;
+    }
+
+    patch.name = (*json)["name"].asString();
+
+    if (json->isMember("age")) {
+        if (!(*json)["age"].isInt()) {
+            error = validationError("age", "Must be an integer");
             return false;
         }
 
-        patch.name = (*json)["name"].asString();
-    }
-
-    if (json->isMember("age")) {
-        if ((*json)["age"].isNull()) {
-            patch.age.emplace(std::nullopt);
-        } else {
-            if (!(*json)["age"].isInt()) {
-                error = errorResponse(
-                    "Field 'age' must be an integer or null"
-                );
-                return false;
-            }
-
-            patch.age.emplace((*json)["age"].asInt());
-        }
+        patch.age = (*json)["age"].asInt();
     }
 
     if (json->isMember("address")) {
-        if ((*json)["address"].isNull()) {
-            patch.address.emplace(std::nullopt);
-        } else {
-            if (!(*json)["address"].isString()) {
-                error = errorResponse(
-                    "Field 'address' must be a string or null"
-                );
-                return false;
-            }
-
-            patch.address.emplace((*json)["address"].asString());
+        if (!(*json)["address"].isString()) {
+            error = validationError("address", "Must be a string");
+            return false;
         }
+
+        patch.address = (*json)["address"].asString();
     }
 
     if (json->isMember("work")) {
-        if ((*json)["work"].isNull()) {
-            patch.work.emplace(std::nullopt);
-        } else {
-            if (!(*json)["work"].isString()) {
-                error = errorResponse(
-                    "Field 'work' must be a string or null"
-                );
-                return false;
-            }
-
-            patch.work.emplace((*json)["work"].asString());
+        if (!(*json)["work"].isString()) {
+            error = validationError("work", "Must be a string");
+            return false;
         }
+
+        patch.work = (*json)["work"].asString();
     }
 
     return true;
@@ -184,11 +184,9 @@ void handleFindAll(
     app::PersonService& service,
     const ResponseCallback& callback
 ) {
-    const auto persons = service.findAll();
-
     Json::Value result(Json::arrayValue);
 
-    for (const auto& person : persons) {
+    for (const auto& person : service.findAll()) {
         result.append(toJson(person));
     }
 
@@ -202,6 +200,7 @@ void handleCreate(
 ) {
     app::PersonCreate data;
     HttpResponsePtr error;
+
     const auto json = request->getJsonObject();
 
     if (!parseCreate(json.get(), data, error)) {
@@ -241,10 +240,7 @@ void handleDelete(
     int id,
     const ResponseCallback& callback
 ) {
-    if (!service.remove(id)) {
-        callback(notFound());
-        return;
-    }
+    service.remove(id);
 
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(k204NoContent);
@@ -260,6 +256,7 @@ void handleUpdate(
 ) {
     app::PersonPatch patch;
     HttpResponsePtr error;
+
     const auto json = request->getJsonObject();
 
     if (!parsePatch(json.get(), patch, error)) {
